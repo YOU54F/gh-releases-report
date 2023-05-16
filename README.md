@@ -1,4 +1,4 @@
-[![CI/CD](https://github.com/mdb/gh-release-report/actions/workflows/cicd.yaml/badge.svg)](https://github.com/mdb/gh-release-report/actions/workflows/cicd.yaml)
+[![CI/CD](https://github.com/you54f/gh-releases-report/actions/workflows/test.yml/badge.svg)](https://github.com/you54f/gh-releasse-report/actions/workflows/test.yml)
 
 # gh-releases-report
 
@@ -62,7 +62,6 @@ Install the `jq` CLI [for your platform](https://stedolan.github.io/jq/download/
 brew install jq
 ```
 
-
 It relies on [gh-release-report](https://github.com/mdb/gh-release-report), this tool will attempt to brute install it for you :)
 
 ### Install the extension
@@ -78,11 +77,7 @@ gh extension install you54f/gh-releases-report
 Build and test `gh-releases-report` locally:
 
 ```
-make
-```
-
-Install a locally built `gh-releases-report` for use as `gh releases-report`:
-
-```
-make install
+git clone https://github.com/YOU54F/gh-releases-report.git
+cd gh-releases-report
+gh extension install .
 ```
