@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "test" ]
   pull_request:
     branches: [ "main" ]
 
@@ -17,8 +17,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: install depedency mdb/gh-release-report
-        run: gh extension install mdb/gh-release-report
       - name: install extension
         run: gh extension install .
       - name: test default command
@@ -32,4 +30,4 @@ jobs:
       - name: test default org command
         run: gh releases-report --org
       - name: test user provided org command
-        run: gh releases-report --org you54f
+        run: gh releases-report --org safdotdev

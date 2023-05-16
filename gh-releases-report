@@ -12,13 +12,13 @@ if ! type -p jq >/dev/null; then
   exit 1
 fi
 
-if ! type -p gh release-report --repo "cli/cli" --tag "v1.0.0" >/dev/null; then
-  echo "mdb/gh-release-report not found on the system" >&2
-  echo "please install with gh cli" >&2
-  echo "gh extension install mdb/gh-release-report" >&2
-  echo "source code: https://github.com/mdb/gh-release-report" >&2
-  exit 1
-fi
+# if ! type -p gh release-report >/dev/null; then
+#   echo "mdb/gh-release-report not found on the system" >&2
+#   echo "please install with gh cli" >&2
+#   echo "gh extension install mdb/gh-release-report" >&2
+#   echo "source code: https://github.com/mdb/gh-release-report" >&2
+#   exit 1
+# fi
 
 display_help() {
   cat <<-EOF
@@ -47,10 +47,12 @@ case $1 in
     exit 0
     ;;
   -o | --org)
-    GITHUB_ORG=${2:-pact-foundation};for repo in $(gh repo list $GITHUB_ORG --json name -q '.[]|.name'); do for tag in $(gh release list --repo $GITHUB_ORG/$repo --limit 1000 | cut -f3); do gh release-report --repo $GITHUB_ORG/$repo --tag "$tag"; done; done;
+    gh extension install mdb/gh-release-report || true
+    GITHUB_ORG=${2:-"safdotdev"};for repo in $(gh repo list $GITHUB_ORG --json name -q '.[]|.name'); do for tag in $(gh release list --repo $GITHUB_ORG/$repo --limit 1000 | cut -f3); do gh release-report --repo $GITHUB_ORG/$repo --tag "$tag"; done; done;
     ;;
   -r | --repo)
-    GITHUB_REPO=${2:-"pact-foundation/pact-ruby-standalone"}; for i in $(gh release list --repo $GITHUB_REPO --limit 1000 | cut -f3); do gh release-report --repo $GITHUB_REPO --tag "$i"; done;
+    gh extension install mdb/gh-release-report || true
+    GITHUB_REPO=${2:-"you54f/pact-ruby-standalone"}; for i in $(gh release list --repo $GITHUB_REPO --limit 1000 | cut -f3); do gh release-report --repo $GITHUB_REPO --tag "$i"; done;
     ;;
   *)
     echo "Please specify a valid command"
