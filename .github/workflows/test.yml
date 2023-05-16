@@ -17,6 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: install depedency mdb/gh-release-report
+        run: gh extension install mdb/gh-release-report
       - name: install extension
         run: gh extension install .
       - name: test default command
