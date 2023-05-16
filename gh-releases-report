@@ -1,35 +1,60 @@
 #!/usr/bin/env bash
 set -e
 
-echo "Hello gh-releases-report!"
+echo "Hello from gh-releases-report!"
 
-# Snippets to help get started:
+if ! type -p jq >/dev/null; then
+  echo "jq not found on the system" >&2
+  echo "please install with your favourite package manager" >&2
+  echo "scoop install jq" >&2
+  echo "brew install jq" >&2
+  echo "apt install jq" >&2
+  exit 1
+fi
 
-# Determine if an executable is in the PATH
-# if ! type -p ruby >/dev/null; then
-#   echo "Ruby not found on the system" >&2
-#   exit 1
-# fi
+if ! type -p gh release-report --repo "cli/cli" --tag "v1.0.0" >/dev/null; then
+  echo "mdb/gh-release-report not found on the system" >&2
+  echo "please install with gh cli" >&2
+  echo "gh extension install mdb/gh-release-report" >&2
+  echo "source code: https://github.com/mdb/gh-release-report" >&2
+  exit 1
+fi
 
-# Pass arguments through to another command
-# gh issue list "$@" -R cli/cli
+display_help() {
+  cat <<-EOF
+  usage:
+    gh releases-report --repo <repo>
+    gh releases-report --org <org>
 
-# Using the gh api command to retrieve and format information
-# QUERY='
-#   query($endCursor: String) {
-#     viewer {
-#       repositories(first: 100, after: $endCursor) {
-#         nodes {
-#           nameWithOwner
-#           stargazerCount
-#         }
-#       }
-#     }
-#   }
-# '
-# TEMPLATE='
-#   {{- range $repo := .data.viewer.repositories.nodes -}}
-#     {{- printf "name: %s - stargazers: %v\n" $repo.nameWithOwner $repo.stargazerCount -}}
-#   {{- end -}}
-# '
-# exec gh api graphql -f query="${QUERY}" --paginate --template="${TEMPLATE}"
+  commands:
+    gh releases-report --repo <repo>     shows the list of download stats for all release assets for the specified repo
+    gh releases-report --org <user/org>  shows the list of download stats for all release assets for all repos in the specified org
+
+  [options]
+    -h, --help                  Display the help information
+    -o, --org <user/org>        Specify the user or org to list the repos for
+    -r, --repo <repo>           Specify the repo to list the releases for
+
+  source code: https://github.com/you54f/gh-releases-report
+  credits: https://github.com/mdb/gh-release-report
+EOF
+  exit 0
+}
+
+case $1 in
+  -h | --help)
+    display_help
+    exit 0
+    ;;
+  -o | --org)
+    GITHUB_ORG=${2:-pact-foundation};for repo in $(gh repo list $GITHUB_ORG --json name -q '.[]|.name'); do for tag in $(gh release list --repo $GITHUB_ORG/$repo --limit 1000 | cut -f3); do gh release-report --repo $GITHUB_ORG/$repo --tag "$tag"; done; done;
+    ;;
+  -r | --repo)
+    GITHUB_REPO=${2:-"pact-foundation/pact-ruby-standalone"}; for i in $(gh release list --repo $GITHUB_REPO --limit 1000 | cut -f3); do gh release-report --repo $GITHUB_REPO --tag "$i"; done;
+    ;;
+  *)
+    echo "Please specify a valid command"
+    display_help
+    exit 0
+    ;;
+esac
