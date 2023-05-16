@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: install extension
+        run: gh extension install .
+      - name: test default command
+        run: gh releases-report
+      - name: test help
+        run: gh releases-report --help
+      - name: test default repo command
+        run: gh releases-report --repo
+      - name: test user provided repo command
+        run: gh releases-report --repo you54f/pact-ruby-standalone
+      - name: test default org command
+        run: gh releases-report --org
+      - name: test user provided org command
+        run: gh releases-report --org you54f
